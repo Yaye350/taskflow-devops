@@ -1,0 +1,18 @@
+services:
+  api:
+    image: ${DOCKERHUB_USERNAME}/taskflow-api:${IMAGE_TAG:-latest}
+    container_name: taskflow-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - taskflow-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:5000/health').status==200 else 1)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  taskflow-data:
